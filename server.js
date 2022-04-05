@@ -1,34 +1,29 @@
 import dotenv from "dotenv";
+import express from "express";
 import mongoose from "mongoose";
-import Movie from "./models/movie.js";
+import quizRoutes from "./routes/quiz.js";
 
+const app = express();
+
+// middleware
+app.use(express.json()); // convert the body to JSON
+
+app.use("/quiz", quizRoutes);
+
+// adds the keys from my .env file into my process.env object
 dotenv.config();
 
-console.log(process.env.MONGODB);
-
+// connect to our database
 mongoose
   .connect(process.env.MONGODB)
   .then(() => {
-    console.log("Database connection, successful!");
+    console.log("Database connected! 🐢");
   })
   .catch((error) => {
-    console.log("Unable to connect to database");
     console.log(error);
+    console.log("There was an error connecting to the database");
   });
 
-async function createNewMovie() {
-  try {
-    const newMovie = {
-      title: "Vegetable",
-      plot: "a film about veggies",
-      runtim: 150,
-      year: 1977,
-    };
-
-    await Movie.create(newMovie);
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-createNewMovie();
+app.listen(3001, () => {
+  console.log("The server is listening... 🐒");
+});
